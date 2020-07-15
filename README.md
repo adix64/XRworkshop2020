@@ -7,6 +7,8 @@
    • Mixamo   https://www.mixamo.com
 
    • Unity Manual   https://docs.unity3d.com/Manual/
+   
+   • Unity Asset Store   https://assetstore.unity.com/
 
    • OpenGameArt.org   https://opengameart.org
    
