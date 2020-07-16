@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
 
 public class MovePlayer : MonoBehaviour
 {
     public float moveSpeed = 1f;
     public float rotSpeed = 10f;
     public Transform L, R, F, B;
+    public GameObject projectile;
     public float jumpPower = 700f;
     Transform camTransform;
     Rigidbody rigidBody;
@@ -14,7 +16,8 @@ public class MovePlayer : MonoBehaviour
     Vector3 initialPos;
     Vector3 groundNormal;
     bool isOnGround = false;
-
+    Animator animator;
+    Transform particles;
     void Start()
     {// apelat o singura data, la initializare
         camTransform = Camera.main.transform;
@@ -22,6 +25,8 @@ public class MovePlayer : MonoBehaviour
         capsule = GetComponent<CapsuleCollider>();
         initialPos = transform.position;
         groundNormal = Vector3.up;
+        animator = GetComponentInChildren<Animator>();
+        particles = GetComponentInChildren<ParticleSystem>().transform;
     }
 
     void Update()
@@ -37,16 +42,44 @@ public class MovePlayer : MonoBehaviour
         CheckIfOnGround();
         HandleTranslation(dir);
         HandleRotation(dir);
-            
+        AnimateCharacter(dir);
+        HandleAttack();
+
         if (isOnGround && Input.GetButtonDown("Jump"))
+        {
             rigidBody.AddForce(Vector3.up * jumpPower);
-        
+            animator.SetTrigger("Jump");
+        }
+
+      
         ArrowDisplay(h, v);
        
         if (transform.position.y < -10f) // player a cazut in gol
             transform.position = initialPos; // reset pozitie
+
+        Debug.DrawLine(transform.position, transform.position + dir * 3, Color.blue, 1f);
     }
 
+    void HandleAttack()
+    {
+        if (Input.GetButtonDown("Fire1"))
+        {
+            Vector3 projectilePos = transform.position + transform.forward * 0.5f;
+            var obj = GameObject.Instantiate(projectile);
+            Projectile projectileCtrl = obj.GetComponent<Projectile>();
+            projectileCtrl.direction = transform.forward;
+            obj.transform.position = projectilePos;
+            obj.transform.rotation = Quaternion.AngleAxis(90f, transform.right) * transform.rotation;
+        }
+        particles.gameObject.SetActive(Input.GetButton("Fire1"));
+    }
+    void AnimateCharacter(Vector3 dir)
+    {
+        dir = Vector3.ProjectOnPlane(dir, Vector3.up).normalized;
+        Vector3 localCoords = transform.InverseTransformDirection(dir);
+        animator.SetFloat("Forward", localCoords.z);
+        animator.SetFloat("Turn", localCoords.x);
+    }
     void CheckIfOnGround()
     { // raycast din interiorul, centrul capsulei
         //pentru ca originea lui ray e in interiorul capsulei, ray nu va intersecta capsula
