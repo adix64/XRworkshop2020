@@ -18,6 +18,8 @@ public class MovePlayer : MonoBehaviour
     bool isOnGround = false;
     Animator animator;
     Transform particles;
+
+    bool overTheShoulder = false;
     void Start()
     {// apelat o singura data, la initializare
         camTransform = Camera.main.transform;
@@ -40,8 +42,17 @@ public class MovePlayer : MonoBehaviour
             dir = Vector3.ProjectOnPlane(dir, groundNormal).normalized; //directia trebuie sa fie tangenta pe sol       
 
         CheckIfOnGround();
-        HandleTranslation(dir);
-        HandleRotation(dir);
+        HandleTranslation(animator.deltaPosition / Time.deltaTime);
+
+        if (Input.GetButtonDown("Fire2"))
+            overTheShoulder = !overTheShoulder;
+        
+        if(overTheShoulder)
+            HandleRotation(camTransform.forward);
+        else
+            HandleRotation(dir);
+
+
         AnimateCharacter(dir);
         HandleAttack();
 
@@ -67,10 +78,13 @@ public class MovePlayer : MonoBehaviour
             Vector3 projectilePos = transform.position + transform.forward * 0.5f;
             var obj = GameObject.Instantiate(projectile);
             Projectile projectileCtrl = obj.GetComponent<Projectile>();
-            projectileCtrl.direction = transform.forward;
+            projectileCtrl.direction = camTransform.forward;
             obj.transform.position = projectilePos;
             obj.transform.rotation = Quaternion.AngleAxis(90f, transform.right) * transform.rotation;
         }
+        if (Input.GetKeyDown(KeyCode.F))
+            animator.SetTrigger("Punch");
+
         particles.gameObject.SetActive(Input.GetButton("Fire1"));
     }
     void AnimateCharacter(Vector3 dir)

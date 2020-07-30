@@ -18,4 +18,11 @@ public class Projectile : MonoBehaviour
     {
         rigidbody.velocity = direction * projectileSpeed;
     }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        //if (collision.other.gameObject.layer == LayerMask.NameToLayer("PlayerLYR"))
+        //     return;
+        Destroy(gameObject);
+    }
 }
