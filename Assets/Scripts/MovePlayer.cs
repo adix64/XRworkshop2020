@@ -140,7 +140,11 @@ public class MovePlayer : MonoBehaviour
             transform.rotation = Quaternion.AngleAxis(angle, axis) * transform.rotation;
         }
     }
-
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("EnemyHitbox"))
+            animator.SetTrigger("GetHit");
+    }
     void ArrowDisplay(float h, float v)
     {
         L.gameObject.SetActive(h < 0f);

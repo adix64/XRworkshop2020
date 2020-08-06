@@ -5,12 +5,12 @@ using UnityEngine;
 public class ColorTarget : MonoBehaviour
 {
     public Transform player;
-    MeshRenderer meshRenderer;
+    SkinnedMeshRenderer meshRenderer;
     Transform camTransform;
     // Start is called before the first frame update
     void Start()
     {
-        meshRenderer = GetComponent<MeshRenderer>();
+        meshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
         camTransform = Camera.main.transform;
     }
 
@@ -22,8 +22,6 @@ public class ColorTarget : MonoBehaviour
         dotProd = dotProd * 0.5f + 0.5f; //[0..1]
         dotProd = Mathf.Pow(dotProd, 8f);
         Color newColor = Color.Lerp(Color.black, Color.yellow, dotProd);
-        //var mat = meshRenderer.material;
-        //mat.SetColor("_EmissionColor", newColor);
-        meshRenderer.material.color = newColor;
+        meshRenderer.sharedMaterial.color = newColor;
     }
 }
