@@ -54,6 +54,9 @@ public class EnemyCtrl : MonoBehaviour
         }
         
         agent.SetDestination(destination);
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("HitReact"))
+            agent.SetDestination(transform.position);
+
         Vector3 toPlayer = (player.position - transform.position).normalized;
         transform.rotation = Quaternion.FromToRotation(transform.forward, toPlayer) * transform.rotation;
         if (agent.remainingDistance < 1.5f)
